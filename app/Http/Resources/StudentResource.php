@@ -25,6 +25,7 @@ class StudentResource extends JsonResource
             "email"           => $this->email,
             "phone"           => $this->phone,
             "status"          => $this->status,
+            "studentFields"   => StudentFieldResource::collection($this->studentFields),
         ];
     }
 

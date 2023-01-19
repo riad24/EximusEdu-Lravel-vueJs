@@ -22,23 +22,8 @@ class Institute extends Model implements HasMedia
         'description'
     ];
 
-    public function getImageAttribute() : string
+    public function fields() : \Illuminate\Database\Eloquent\Relations\hasMany
     {
-        if (!empty($this->getFirstMediaUrl('institute'))) {
-            return asset($this->getFirstMediaUrl('institute'));
-        }
-        return asset('images/no-image-available.png');
-    }
-
-    public function getImagesAttribute() : array
-    {
-        $response = [];
-        if (!empty($this->getFirstMediaUrl('institute'))) {
-            $images = $this->getMedia('institute');
-            foreach ($images as $image) {
-                $response[] = $image['original_url'];
-            }
-        }
-        return $response;
+        return $this->hasMany(Field::class);
     }
 }

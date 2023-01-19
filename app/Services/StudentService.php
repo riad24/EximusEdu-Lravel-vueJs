@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Http\Requests\StudentRequest;
 use App\Http\Requests\PaginateRequest;
 use App\Models\Student;
+use App\Models\StudentField;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -56,8 +57,26 @@ class StudentService
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->student = Student::create($request->validated());
-
+                $this->student = Student::create([
+                    'class_name'        => $request->class_name,
+                    'name'              => $request->name,
+                    'email'             => $request->email,
+                    'phone'             => $request->phone,
+                    'institute_id'      => $request->institute_id,
+                    'status'            => $request->status,
+                ]);
+                $studentFields = json_decode($request->studentFields);
+                if(!blank($studentFields)){
+                    foreach ($studentFields as $key=> $studentField){
+                        $field = new StudentField;
+                        $field->field_name      = $studentField->field_key;
+                        $field->field_value     = $studentField->field_value;
+                        $field->student_id      = $this->student->id;
+                        $field->institute_id    = $request->institute_id;
+                        $field->field_id        = $studentField->field_id;
+                        $field->save();
+                    }
+                }
             });
             return $this->student;
         } catch (Exception $exception) {
@@ -74,7 +93,30 @@ class StudentService
     {
         try {
             DB::transaction(function () use ($request, $student) {
-                $student->update($request->validated());
+
+                    $student->class_name     = $request->class_name;
+                    $student->name           = $request->name;
+                    $student->email          = $request->email;
+                    $student->phone          = $request->phone;
+                    $student->institute_id   = $request->institute_id;
+                    $student->status         = $request->status;
+                    $student->save();
+
+                $studentFields = json_decode($request->studentFields);
+                if(!blank($studentFields)){
+                    foreach ($student->studentFields as $field) {
+                        $field->delete();
+                    }
+                    foreach ($studentFields as $key=> $studentField){
+                        $field = new StudentField;
+                        $field->field_name      = $studentField->field_key;
+                        $field->field_value     = $studentField->field_value;
+                        $field->student_id      = $student->id;
+                        $field->institute_id    = $request->institute_id;
+                        $field->field_id        = $studentField->field_id;
+                        $field->save();
+                    }
+                }
             });
             return Student::find($student->id);
         } catch (Exception $exception) {
@@ -91,7 +133,13 @@ class StudentService
     {
         try {
             DB::transaction(function () use ($student) {
+                if(!blank($student->studentFields)){
+                    foreach ($student->studentFields as $field) {
+                        $field->delete();
+                    }
+                }
                 $student->delete();
+
             });
         } catch (Exception $exception) {
             Log::info($exception->getMessage());

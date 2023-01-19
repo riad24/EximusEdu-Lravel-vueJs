@@ -31,13 +31,8 @@ class StudentRequest extends FormRequest
                 'max:190',
                 Rule::unique("students", "name")->ignore($this->route('student.id'))
             ],
-            'class_name'            => [
-                'required',
-                'string',
-                'max:190',
-                Rule::unique("students", "class_name")->ignore($this->route('student.id'))
-            ],
-            'email'                 => [
+            'class_name'=> ['required', 'string', 'max:190',],
+            'email'  => [
                 'required',
                 'email',
                 'max:190',

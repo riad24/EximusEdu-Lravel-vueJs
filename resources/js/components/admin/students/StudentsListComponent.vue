@@ -212,6 +212,7 @@ export default {
                     institute_id: null,
                     status: statusEnum.ACTIVE,
                 },
+                fields:[],
                 errors: {}
             }
         }
@@ -270,7 +271,7 @@ export default {
         },
         edit: function (student) {
             this.$store.dispatch('student/edit', student.id).then(res => {
-                this.props.errors = {}
+                this.props.errors = {};
                 this.props.form = {
                     name: student.name,
                     class_name: student.class_name,
@@ -279,9 +280,34 @@ export default {
                     phone: student.phone,
                     status: student.status,
                 };
+
             }).catch((err) => {
                 alertService.error(err.response.data.message);
             });
+
+            axios.get('/admin/institute/fields/'+student.institute_id,).then((response) => {
+                if(response.data.data.length > 0) {
+                    response.data.data.forEach(item=>{
+                        student.studentFields.forEach(field=>{
+                            if(field.field_id == item.id) {
+                                this.props.fields.push({
+                                    title: item.title,
+                                    field_id: item.id,
+                                    type: item.type,
+                                    field_key: item.slug,
+                                    field_value: field.field_value,
+                                })
+                            }
+                        });
+
+                    });
+
+                }else {
+                    this.props.fields = [];
+                }
+            }).catch((err) => {
+
+            })
         },
         destroy: function (id) {
             appService.destroyConfirmation().then((res) => {

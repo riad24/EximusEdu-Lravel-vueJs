@@ -51,6 +51,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:sanctum', 'verify.api')
         Route::match(['post', 'put', 'patch'], '/{institute}', [InstituteController::class, 'update']);
         Route::delete('/{institute}', [InstituteController::class, 'destroy']);
         Route::get('/export', [InstituteController::class, 'export']);
+        Route::get('/fields/{institute}', [InstituteController::class, 'fields']);
     });
 
     Route::prefix('student')->name('student.')->group(function () {

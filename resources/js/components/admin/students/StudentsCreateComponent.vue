@@ -13,24 +13,31 @@
             <form @submit.prevent="save" enctype="multipart/form-data">
                 <div class="row g-2">
                     <div class="col-md-6 mb-2">
+
                         <label class="form-label" for="institute_id">{{ $t("label.institute") }} <span
                             class="text-danger">*</span></label>
-                        <vue-select
-                            class="form-control"
-                            id="institute_id"
-                            v-bind:class="props.errors.institute_id ? 'is-invalid' : ''"
-                            v-model="props.form.institute_id"
-                            @change="getField"
-                            :options="institutes"
-                            label-by="name"
-                            value-by="id"
-                            :closeOnSelect="true"
-                            :searchable="true"
-                            :clearOnClose="true"
-                            placeholder="--"
-                            search-placeholder="--"
+                        <select class="form-control"
+                                id="institute_id"
+                                v-bind:class="props.errors.institute_id ? 'is-invalid' : ''" placeholder="Choose institute" @change="onChange($event)" v-model="props.form.institute_id">
+                            <option v-for="institute in institutes" :value="institute.id" :key="institute.id">{{ institute.name }}</option>
+                        </select>
+<!--                        <vue-select-->
+<!--                            class="form-control"-->
+<!--                            id="institute_id"-->
+<!--                            v-bind:class="props.errors.institute_id ? 'is-invalid' : ''"-->
+<!--                            v-model="props.form.institute_id"-->
+<!--                            :on-change="getField"-->
+<!--                            @change="onChange($event)"-->
+<!--                            :options="institutes"-->
+<!--                            label-by="name"-->
+<!--                            value-by="id"-->
+<!--                            :closeOnSelect="true"-->
+<!--                            :searchable="true"-->
+<!--                            :clearOnClose="true"-->
+<!--                            placeholder="&#45;&#45;"-->
+<!--                            search-placeholder="&#45;&#45;"-->
 
-                        />
+<!--                        />-->
                         <div class="invalid-feedback" v-if="props.errors.institute_id">
                             {{ props.errors.institute_id[0] }}
                         </div>
@@ -108,6 +115,15 @@
                     </div>
                 </div>
 
+                <div class="row g-2" v-if="props.fields.length > 0">
+                    <div class="col-md-6 mb-2" v-for="field in props.fields">
+                        <label class="form-label" >{{ field.title }} </label>
+                        <input v-bind:type="field.type"
+                               v-model="field.field_value"
+                               class="form-control"
+                               :placeholder="field.title"/>
+                    </div>
+                </div>
 
                 <div class="row g-2">
                     <div class="col-md-6 mb-2 mt-3">
@@ -151,6 +167,7 @@ export default {
         institutes: function () {
             return this.$store.getters['institute/lists'];
         },
+
     },
     mounted() {
         this.$store.dispatch('institute/lists', {status: statusEnum.ACTIVE});
@@ -159,12 +176,30 @@ export default {
         permissionChecker(e) {
             return appService.permissionChecker(e);
         },
+        onChange(e) {
+            axios.get('/admin/institute/fields/'+e.target.value,).then((response) => {
+                if(response.data.data.length > 0) {
+                    response.data.data.forEach(item=>{
+                        this.props.fields.push({
+                            title: item.title,
+                            field_id: item.id,
+                            type: item.type,
+                            field_key: item.slug,
+                            field_value: ''
+                        })
+                    });
+
+                }else {
+                    this.props.fields = [];
+                }
+            }).catch((err) => {
+
+            })
+        },
         phoneNumber(e) {
             return appService.phoneNumber(e);
         },
-        getField: function(e) {
-            console.log(e.target.value);
-        },
+
         save: function () {
             const fd = new FormData();
             fd.append('name', this.props.form.name);
@@ -173,7 +208,9 @@ export default {
             fd.append('email', this.props.form.email);
             fd.append('phone', this.props.form.phone);
             fd.append('status', this.props.form.status);
+            fd.append('studentFields', JSON.stringify(this.props.fields));
 
+            console.log(this.fields);
             const tempId = this.$store.getters['student/temp'].temp_id;
             this.loading.isActive = true;
             this.$store.dispatch('student/save', {
@@ -191,8 +228,8 @@ export default {
                     institute_id: null,
                     status: statusEnum.ACTIVE,
                 };
+                this.props.fields = [];
                 this.props.errors = {};
-                this.$refs.imageProperty.value = null;
             }).catch((err) => {
                 this.loading.isActive = false;
                 this.props.errors = err.response.data.errors;
@@ -209,6 +246,7 @@ export default {
                 institute_id: null,
                 status: statusEnum.ACTIVE,
             };
+            this.props.fields = [];
             this.props.errors = {};
         }
     }

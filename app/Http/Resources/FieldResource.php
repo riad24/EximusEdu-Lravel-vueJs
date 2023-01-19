@@ -18,7 +18,7 @@ class FieldResource extends JsonResource
     {
         return [
             "id"              => $this->id,
-            "slug"            => $this->class_name,
+            "slug"            => $this->slug,
             "institute_name"  => optional($this->institute)->name,
             "institute_id"    => $this->institute_id,
             "title"           => $this->title,

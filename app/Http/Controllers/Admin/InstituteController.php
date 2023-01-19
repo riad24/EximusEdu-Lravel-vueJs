@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\InstituteExport;
 use App\Http\Requests\InstituteRequest;
 use App\Http\Requests\PaginateRequest;
+use App\Http\Resources\FieldResource;
 use App\Http\Resources\InstituteResource;
 use App\Models\Institute;
 use App\Services\InstituteService;
@@ -73,6 +74,15 @@ class InstituteController extends AdminController
     {
         try {
             return Excel::download(new InstituteExport($this->instituteService, $request), 'Institute.xlsx');
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
+
+    public function fields(Institute $institute)
+    {
+        try {
+            return FieldResource::collection($institute->fields);
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
