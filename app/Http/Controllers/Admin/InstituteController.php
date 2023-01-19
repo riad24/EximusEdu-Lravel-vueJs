@@ -14,19 +14,19 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class InstituteController extends AdminController
 {
-    private $productService;
+    private $instituteService;
 
 
-    public function __construct(InstituteService $productService)
+    public function __construct(InstituteService $instituteService)
     {
         parent::__construct();
-        $this->productService          = $productService;
+        $this->instituteService          = $instituteService;
     }
 
     public function index(PaginateRequest $request)
     {
         try {
-            return InstituteResource::collection($this->productService->list($request));
+            return InstituteResource::collection($this->instituteService->list($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
@@ -35,35 +35,35 @@ class InstituteController extends AdminController
     public function store(InstituteRequest $request)
     {
         try {
-            return new InstituteResource($this->productService->store($request));
+            return new InstituteResource($this->instituteService->store($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
 
-    public function update(InstituteRequest $request, Institute $product)
+    public function update(InstituteRequest $request, Institute $institute)
     {
         try {
-            return new InstituteResource($this->productService->update($request, $product));
+            return new InstituteResource($this->instituteService->update($request, $institute));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
 
-    public function destroy(Institute $product)
+    public function destroy(Institute $institute)
     {
         try {
-            $this->productService->destroy($product);
+            $this->instituteService->destroy($institute);
             return response('', 202);
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
 
-    public function show(Institute $product)
+    public function show(Institute $institute)
     {
         try {
-            return new InstituteResource($this->productService->show($product));
+            return new InstituteResource($this->instituteService->show($institute));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
@@ -72,7 +72,7 @@ class InstituteController extends AdminController
     public function export(PaginateRequest $request)
     {
         try {
-            return Excel::download(new InstituteExport($this->productService, $request), 'Institute.xlsx');
+            return Excel::download(new InstituteExport($this->instituteService, $request), 'Institute.xlsx');
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }

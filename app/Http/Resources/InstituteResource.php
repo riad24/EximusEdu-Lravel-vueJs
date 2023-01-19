@@ -19,6 +19,8 @@ class InstituteResource extends JsonResource
         return [
             "id"              => $this->id,
             "name"            => $this->name,
+            "email"           => $this->email,
+            "phone"           => $this->phone,
             "slug"            => $this->slug,
             "status"          => $this->status,
             "description"     => $this->description === null ? '' : $this->description,

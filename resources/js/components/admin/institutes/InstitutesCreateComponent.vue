@@ -24,9 +24,54 @@
                         </div>
                     </div>
 
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label" for="email">{{ $t("label.email") }} <span
+                            class="text-danger">*</span></label>
+                        <input type="email" id="email" v-model="props.form.email" class="form-control"
+                               v-bind:class="props.errors.email ? 'is-invalid' : ''"
+                               :placeholder="$t('placeholder.email')"/>
+                        <div class="invalid-feedback" v-if="props.errors.email">{{
+                            props.errors.email[0]
+                            }}
+                        </div>
+                    </div>
+
                 </div>
-
-
+                <div class="row g-2">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label" for="phone">{{ $t("label.phone") }} <span
+                            class="text-danger">*</span></label>
+                        <input type="text" id="phone" v-on:keypress="phoneNumber($event)"
+                               v-model="props.form.phone"
+                               class="form-control"
+                               v-bind:class="props.errors.phone ? 'is-invalid' : ''"
+                               :placeholder="$t('placeholder.phone')"/>
+                        <div class="invalid-feedback" v-if="props.errors.phone">{{
+                            props.errors.phone[0]
+                            }}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="active" class="form-label d-block">{{ $t('label.status') }}</label>
+                        <div class="form-check form-check-inline mt-2"
+                             v-bind:class="props.errors.status ? 'is-invalid' : ''">
+                            <input class="form-check-input" v-model="props.form.status" type="radio"
+                                   v-bind:class="props.errors.status ? 'is-invalid' : ''"
+                                   id="active" :value="enums.statusEnum.ACTIVE">
+                            <label class="form-check-label" for="active">{{ $t('label.active') }}</label>
+                        </div>
+                        <div class="form-check form-check-inline"
+                             v-bind:class="props.errors.status ? 'is-invalid' : ''">
+                            <input class="form-check-input" v-model="props.form.status" type="radio"
+                                   v-bind:class="props.errors.status ? 'is-invalid' : ''"
+                                   id="inactive" :value="enums.statusEnum.INACTIVE">
+                            <label class="form-check-label" for="inactive">{{ $t('label.inactive') }}</label>
+                        </div>
+                        <div class="invalid-feedback" v-if="props.errors.status">
+                            {{ props.errors.status[0] }}
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row g-2">
                     <div class="col-md-12 mb-2">
@@ -85,10 +130,14 @@ export default {
         permissionChecker(e) {
             return appService.permissionChecker(e);
         },
-
+        phoneNumber(e) {
+            return appService.phoneNumber(e);
+        },
         save: function () {
             const fd = new FormData();
             fd.append('name', this.props.form.name);
+            fd.append('email', this.props.form.email);
+            fd.append('phone', this.props.form.phone);
             fd.append('status', this.props.form.status);
             fd.append('description', this.props.form.description);
 
@@ -103,9 +152,11 @@ export default {
                 this.loading.isActive = false;
                 this.props.form = {
                     name: "",
+                    email: "",
+                    phone: "",
                     status: statusEnum.ACTIVE,
                     description: ""
-                }
+                };
                 this.props.errors = {};
                 this.$refs.imageProperty.value = null;
             }).catch((err) => {
@@ -118,11 +169,12 @@ export default {
             this.props.errors = {};
             this.$props.props.form = {
                 name: "",
+                email: "",
+                phone: "",
                 status: statusEnum.ACTIVE,
                 description: ""
-            }
+            };
             this.props.errors = {};
-            this.$refs.imageProperty.value = null;
         }
     }
 }

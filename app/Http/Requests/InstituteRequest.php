@@ -31,7 +31,14 @@ class InstituteRequest extends FormRequest
                 'max:190',
                 Rule::unique("institutes", "name")->ignore($this->route('institute.id'))
             ],
+            'email'                 => [
+                'required',
+                'email',
+                'max:190',
+                Rule::unique("users", "email")->ignore($this->route('institute.id'))
+            ],
 
+            'phone'           => ['required', 'string', 'max:20'],
             'description'     => ['nullable', 'string', 'max:2000'],
             'status'          => ['required', 'numeric', 'max:24'],
         ];

@@ -16,6 +16,8 @@ class InstituteService
     public $institute;
     protected $instituteFilter = [
         'name',
+        'email',
+        'phone',
         'slug',
         'status',
         'description'
@@ -112,6 +114,6 @@ class InstituteService
             throw new Exception($exception->getMessage(), 422);
         }
     }
-    
+
 
 }

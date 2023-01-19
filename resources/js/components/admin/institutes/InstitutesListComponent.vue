@@ -96,6 +96,8 @@
                 <thead>
                 <tr>
                     <th>{{ $t('label.name') }}</th>
+                    <th>{{ $t('label.email') }}</th>
+                    <th>{{ $t('label.phone') }}</th>
                     <th>{{ $t("label.status") }}</th>
                     <th class="hidden-print"
                         v-if="permissionChecker('institutes')">
@@ -106,6 +108,8 @@
                 <tbody v-if="institutes.length > 0">
                 <tr v-for="institute in institutes" :key="institute">
                     <td>{{ institute.name }}</td>
+                    <td>{{ institute.email }}</td>
+                    <td>{{ institute.phone }}</td>
                     <td>
                         <span :class="statusClass(institute.status)">
                             {{ enums.statusEnumArray[institute.status] }}
@@ -192,11 +196,15 @@ export default {
                     page: 1,
                     per_page: 10,
                     name: "",
+                    email: "",
+                    phone: "",
                     status: null,
                     description: ""
                 },
                 form: {
                     name: "",
+                    email: "",
+                    phone: "",
                     status: statusEnum.ACTIVE,
                     description: ""
                 },
@@ -233,6 +241,8 @@ export default {
             this.props.search.paginate = 1;
             this.props.search.page = 1;
             this.props.search.name = "";
+            this.props.search.email = "";
+            this.props.search.phone = "";
             this.props.search.status = null;
             this.props.search.description = "";
             this.list();
@@ -257,7 +267,8 @@ export default {
                 this.props.errors = {}
                 this.props.form = {
                     name: institute.name,
-                    code: institute.code,
+                    email: institute.email,
+                    phone: institute.phone,
                     status: institute.status,
                     description: institute.description
                 };
