@@ -6,17 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
-class Student extends Model
+class StudentField extends Model
 {
     use HasFactory;
 
-    protected $table = "students";
+    protected $table = "student_fields";
     protected $fillable = [
-        'name',
-        'class_name',
-        'email',
-        'phone',
-        'status',
+        'field_name',
+        'field_value',
+        'field_id',
+        'student_id',
         'institute_id',
     ];
 
@@ -24,10 +23,9 @@ class Student extends Model
     {
         return $this->belongsTo(Institute::class);
     }
-
-    public function studentFields() : \Illuminate\Database\Eloquent\Relations\hasMany
+    public function field() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasMany(StudentField::class);
+        return $this->belongsTo(Field::class);
     }
 
 }

@@ -5,7 +5,7 @@
         <div class="card-header-with-button">
             <div class="card-header flex-column flex-md-row">
                 <div class="head-label text-center">
-                    <h5 class="card-title mb-0">{{ $t('menu.students') }}</h5>
+                    <h5 class="card-title mb-0">{{ $t('menu.fields') }}</h5>
                 </div>
                 <div class="card-header-button pt-3 pt-md-0">
                     <div class="card-button">
@@ -39,14 +39,9 @@
                     <form @submit.prevent="search">
                         <div class="row g-2">
                             <div class="col-md-3 mb-2">
-                                <label class="form-label" for="searchName">{{ $t("label.class_name") }}</label>
-                                <input type="text" id="searchClassName" v-model="props.search.class_name" class="form-control"
-                                       :placeholder="$t('placeholder.student_class_name')"/>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label" for="searchName">{{ $t("label.name") }}</label>
-                                <input type="text" id="searchName" v-model="props.search.name" class="form-control"
-                                       :placeholder="$t('placeholder.student_name')"/>
+                                <label class="form-label" for="searchName">{{ $t("label.title") }}</label>
+                                <input type="text" id="searchName" v-model="props.search.title" class="form-control"
+                                       :placeholder="$t('placeholder.field_title')"/>
                             </div>
                             <div class="col-md-3 mb-2">
                                 <label class="form-label" for="searchStatus">{{ $t("label.status") }}</label>
@@ -68,8 +63,8 @@
                                 />
                             </div>
 
-
                         </div>
+
 
                         <div class="row g-2">
                             <div class="col-md-6 mt-3 mb-2">
@@ -92,38 +87,36 @@
                 <thead>
                 <tr>
                     <th>{{ $t('label.institute') }}</th>
-                    <th>{{ $t('label.class_name') }}</th>
-                    <th>{{ $t('label.name') }}</th>
-                    <th>{{ $t('label.email') }}</th>
-                    <th>{{ $t('label.phone') }}</th>
+                    <th>{{ $t('label.title') }}</th>
+                    <th>{{ $t('label.type') }}</th>
+                    <th>{{ $t('label.field_type') }}</th>
                     <th>{{ $t("label.status") }}</th>
                     <th class="hidden-print"
-                        v-if="permissionChecker('students')">
+                        v-if="permissionChecker('fields')">
                         {{ $t("label.action") }}
                     </th>
                 </tr>
                 </thead>
-                <tbody v-if="students.length > 0">
-                <tr v-for="student in students" :key="student">
-                    <td>{{ student.institute_name }}</td>
-                    <td>{{ student.class_name }}</td>
-                    <td>{{ student.name }}</td>
-                    <td>{{ student.email }}</td>
-                    <td>{{ student.phone }}</td>
+                <tbody v-if="fields.length > 0">
+                <tr v-for="field in fields" :key="field">
+                    <td>{{ field.institute_name }}</td>
+                    <td>{{ field.title }}</td>
+                    <td>{{ field.type }}</td>
+                    <td>{{ field.field_type }}</td>
                     <td>
-                        <span :class="statusClass(student.status)">
-                            {{ enums.statusEnumArray[student.status] }}
+                        <span :class="statusClass(field.status)">
+                            {{ enums.statusEnumArray[field.status] }}
                         </span>
                     </td>
                     <td class="hidden-print"
-                        v-if="permissionChecker('students')">
+                        v-if="permissionChecker('fields')">
                         <ActionButtonComponent></ActionButtonComponent>
                         <ul class="dropdown-menu dropdown-menu-end custom-margin">
-                            <SmOffCanvasEditComponent v-if="permissionChecker('students')"
-                                                      @click="edit(student)"></SmOffCanvasEditComponent>
+                            <SmOffCanvasEditComponent v-if="permissionChecker('fields')"
+                                                      @click="edit(field)"></SmOffCanvasEditComponent>
                             <SmDeleteComponent
-                                v-if="permissionChecker('students')"
-                                @click="destroy(student.id)"></SmDeleteComponent>
+                                v-if="permissionChecker('fields')"
+                                @click="destroy(field.id)"></SmDeleteComponent>
                         </ul>
                     </td>
                 </tr>
@@ -146,12 +139,12 @@
 
 <script>
 
-import {statusEnum, askEnum} from "../../../enums";
+    import {statusEnum, askEnum, fieldNameEnum} from "../../../enums";
 import PaginationTextComponent from "../components/pagination/PaginationTextComponent";
 import appService from "../../../services/appService";
 import ActionButtonComponent from "../components/button/dropdownActionButton/ActionButtonComponent";
 import SmDeleteComponent from "../components/button/dropdownActionButton/SmDeleteComponent";
-import StudentsCreateComponent from "./StudentsCreateComponent";
+import StudentsCreateComponent from "./FieldsCreateComponent";
 import SmOffCanvasEditComponent from "../components/button/dropdownActionButton/SmOffCanvasEditComponent";
 import SmViewComponent from "../components/button/dropdownActionButton/SmViewComponent";
 import alertService from "../../../services/alertService";
@@ -163,7 +156,7 @@ import TableLimitComponent from "../components/TableLimitComponent";
 import PaginationBox from "../components/pagination/PaginationBox";
 
 export default {
-    name: "StudentsListComponent",
+    name: "FieldsListComponent",
     components: {
         TableLimitComponent,
         FilterComponent,
@@ -195,20 +188,18 @@ export default {
                     paginate: 1,
                     page: 1,
                     per_page: 10,
-                    name: "",
                     institute_name: "",
-                    class_name: "",
-                    email: "",
-                    phone: "",
+                    title: "",
+                    type: null,
+                    field_type: null,
                     institute_id: null,
                     status: null,
                 },
                 form: {
-                    name: "",
-                    class_name: "",
+                    title: "",
                     institute_name: "",
-                    email: "",
-                    phone: "",
+                    type: null,
+                    field_type: fieldNameEnum.INPUT,
                     institute_id: null,
                     status: statusEnum.ACTIVE,
                 },
@@ -217,14 +208,14 @@ export default {
         }
     },
     computed: {
-        students: function () {
-            return this.$store.getters['student/lists'];
+        fields: function () {
+            return this.$store.getters['field/lists'];
         },
         pagination: function () {
-            return this.$store.getters['student/pagination'];
+            return this.$store.getters['field/pagination'];
         },
         paginationPage: function () {
-            return this.$store.getters['student/page'];
+            return this.$store.getters['field/page'];
         },
 
     },
@@ -244,12 +235,9 @@ export default {
         clear: function () {
             this.props.search.paginate = 1;
             this.props.search.page = 1;
-            this.props.search.name = "";
-            this.props.search.class_name = "";
+            this.props.search.title = "";
             this.props.search.institute_name = "";
             this.props.search.institute_id = null;
-            this.props.search.email = "";
-            this.props.search.phone = "";
             this.props.search.status = null;
             this.list();
         },
@@ -257,7 +245,7 @@ export default {
             try {
                 this.loading.isActive = true;
                 this.props.search.page = page;
-                this.$store.dispatch('student/lists', this.props.search).then(res => {
+                this.$store.dispatch('field/lists', this.props.search).then(res => {
                     this.loading.isActive = false;
                 }).catch((err) => {
                     this.loading.isActive = false;
@@ -268,16 +256,15 @@ export default {
                 alertService.error(err.response.data.message);
             }
         },
-        edit: function (student) {
-            this.$store.dispatch('student/edit', student.id).then(res => {
-                this.props.errors = {}
+        edit: function (field) {
+            this.$store.dispatch('field/edit', field.id).then(res => {
+                this.props.errors = {};
                 this.props.form = {
-                    name: student.name,
-                    class_name: student.class_name,
-                    institute_id: student.institute_id,
-                    email: student.email,
-                    phone: student.phone,
-                    status: student.status,
+                    title: field.title,
+                    type: field.type,
+                    field_type: field.field_type,
+                    institute_id: field.institute_id,
+                    status: field.status,
                 };
             }).catch((err) => {
                 alertService.error(err.response.data.message);
@@ -287,9 +274,9 @@ export default {
             appService.destroyConfirmation().then((res) => {
                 try {
                     this.loading.isActive = true;
-                    this.$store.dispatch('student/destroy', {search: this.props.search, id: id}).then((res) => {
+                    this.$store.dispatch('field/destroy', {search: this.props.search, id: id}).then((res) => {
                         this.loading.isActive = false;
-                        alertService.successFlip(null, this.$t('label.student'));
+                        alertService.successFlip(null, this.$t('label.field'));
                     }).catch((err) => {
                         this.loading.isActie = false;
                         alertService.error(err.response.data.message);
@@ -304,12 +291,12 @@ export default {
         },
         xls: function () {
             this.loading.isActive = true;
-            this.$store.dispatch('student/export', this.props.search).then(res => {
+            this.$store.dispatch('field/export', this.props.search).then(res => {
                 this.loading.isActive = false;
                 const blob = new Blob([res.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = this.$t("menu.students");
+                link.download = this.$t("menu.fields");
                 link.click();
                 URL.revokeObjectURL(link.href);
             }).catch((err) => {

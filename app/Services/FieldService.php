@@ -32,7 +32,7 @@ class FieldService
             $orderColumn = $request->get('order_column') ?? 'id';
             $orderType   = $request->get('order_type') ?? 'desc';
 
-            return Field::with('media')->where(function ($query) use ($requests) {
+            return Field::with('institute')->where(function ($query) use ($requests) {
                 foreach ($requests as $key => $request) {
                     if (in_array($key, $this->fieldFilter)) {
                         $query->where($key, 'like', '%' . $request . '%');
@@ -54,7 +54,7 @@ class FieldService
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->field = Field::create($request->validated() + ['slug' => Str::slug($request->name)]);
+                $this->field = Field::create($request->validated() + ['slug' => Str::slug($request->title)]);
 
             });
             return $this->field;

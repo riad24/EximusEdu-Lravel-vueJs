@@ -5,6 +5,8 @@ import timeFormatEnum from "./modules/timeFormatEnum";
 import activityEnum from "./modules/activityEnum";
 import askEnum from "./modules/askEnum";
 import tableLimitEnum from "./modules/tableLimitEnum";
+import fieldTypeEnum from "./modules/fieldTypeEnum";
+import fieldNameEnum from "./modules/fieldNameEnum";
 
 export {
     statusEnum,
@@ -13,4 +15,6 @@ export {
     activityEnum,
     askEnum,
     tableLimitEnum,
+    fieldTypeEnum,
+    fieldNameEnum,
 };

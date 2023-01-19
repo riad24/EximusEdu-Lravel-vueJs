@@ -14,6 +14,9 @@
         "action": "Action",
         "student": "Student",
         "institute": "Institutes",
+        "type": "Type",
+        "field": "Field",
+        "field_type": "Field Type",
         "id": "Id",
         "title": "Title",
         "name": "Name",
@@ -116,6 +119,7 @@
         "about_something": "e.g. Write something about this",
         "institute_name": "e.g. school",
         "student_name": "e.g. name",
+        "field_title": "e.g. title",
         "student_class_name": "e.g. classname",
         "reference_no": "e.g. 2442242442",
         "date": "e.g. 02-11-2022"

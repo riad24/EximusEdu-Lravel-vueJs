@@ -3,6 +3,7 @@ import {createStore} from 'vuex';
 import {auth} from './modules/auth'
 import {institute} from './modules/institute';
 import {student} from './modules/student';
+import {field} from './modules/field';
 import createPersistedState from "vuex-persistedstate";
 
 export default new createStore({
@@ -13,6 +14,7 @@ export default new createStore({
         auth,
         institute,
         student,
+        field,
     },
     plugins: [createPersistedState({
         paths: ['auth']

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('field_name');
             $table->string('field_value');
+            $table->foreignId('field_id')->constrained();
             $table->foreignId('student_id')->constrained();
             $table->foreignId('institute_id')->constrained();
             $table->timestamps();

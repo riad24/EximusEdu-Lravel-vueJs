@@ -17,9 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug');
-            $table->unsignedTinyInteger('field_type');
-            $table->unsignedTinyInteger('type');
+            $table->string('field_type');
+            $table->string('type');
             $table->unsignedTinyInteger('status');
+            $table->foreignId('institute_id')->constrained();
             $table->timestamps();
         });
     }

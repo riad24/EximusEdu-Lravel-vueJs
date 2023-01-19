@@ -13,9 +13,18 @@ class Field extends Model
     protected $table = "fields";
     protected $fillable = [
         'title',
+        'field_type',
+        'type',
+        'institute_id',
         'slug',
         'status',
 
     ];
+
+
+    public function institute() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Institute::class);
+    }
 
 }

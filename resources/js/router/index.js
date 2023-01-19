@@ -15,6 +15,8 @@ import InstitutesComponent from "../components/admin/institutes/InstitutesCompon
 import InstitutesListComponent from "../components/admin/institutes/InstitutesListComponent";
 import StudentsComponent from "../components/admin/students/StudentsComponent";
 import StudentsListComponent from "../components/admin/students/StudentsListComponent";
+import FieldsComponent from "../components/admin/fields/FieldsComponent";
+import FieldsListComponent from "../components/admin/fields/FieldsListComponent";
 
 const routes = [
     {
@@ -104,7 +106,7 @@ const routes = [
         meta: {
             auth: true,
             permissionUrl: 'students',
-            breadcrumb: 'Institutes'
+            breadcrumb: 'Students'
         },
         children: [
             {
@@ -119,6 +121,32 @@ const routes = [
             },
         ]
     },
+
+
+    {
+        path: '/admin/fields',
+        component: FieldsComponent,
+        name: 'admin.fields',
+        redirect: {name: 'admin.fields.list'},
+        meta: {
+            auth: true,
+            permissionUrl: 'fields',
+            breadcrumb: 'Fields'
+        },
+        children: [
+            {
+                path: 'list',
+                component: FieldsListComponent,
+                name: 'admin.fields.list',
+                meta: {
+                    auth: true,
+                    permissionUrl: 'fields',
+                    breadcrumb: ''
+                }
+            },
+        ]
+    },
+
 
 
 
