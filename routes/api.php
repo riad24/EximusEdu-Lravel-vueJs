@@ -1,8 +1,8 @@
 <?php
 
 
-use App\Http\Controllers\Admin\AdministratorController;
-use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\FieldController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\InstituteController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
@@ -51,6 +51,25 @@ Route::prefix('admin')->name('admin.')->middleware('auth:sanctum', 'verify.api')
         Route::match(['post', 'put', 'patch'], '/{institute}', [InstituteController::class, 'update']);
         Route::delete('/{institute}', [InstituteController::class, 'destroy']);
         Route::get('/export', [InstituteController::class, 'export']);
+    });
+
+    Route::prefix('student')->name('student.')->group(function () {
+        Route::get('/', [StudentController::class, 'index']);
+        Route::get('/show/{student}', [StudentController::class, 'show']);
+        Route::post('/', [StudentController::class, 'store']);
+        Route::match(['post', 'put', 'patch'], '/{student}', [StudentController::class, 'update']);
+        Route::delete('/{student}', [StudentController::class, 'destroy']);
+        Route::get('/export', [StudentController::class, 'export']);
+    });
+
+
+    Route::prefix('field')->name('field.')->group(function () {
+        Route::get('/', [FieldController::class, 'index']);
+        Route::get('/show/{field}', [FieldController::class, 'show']);
+        Route::post('/', [FieldController::class, 'store']);
+        Route::match(['post', 'put', 'patch'], '/{field}', [FieldController::class, 'update']);
+        Route::delete('/{field}', [FieldController::class, 'destroy']);
+        Route::get('/export', [FieldController::class, 'export']);
     });
 
 

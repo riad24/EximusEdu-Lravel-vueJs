@@ -13,6 +13,8 @@ import appService from "../services/appService";
 import AdminComponent from "../components/admin/AdminComponent";
 import InstitutesComponent from "../components/admin/institutes/InstitutesComponent";
 import InstitutesListComponent from "../components/admin/institutes/InstitutesListComponent";
+import StudentsComponent from "../components/admin/students/StudentsComponent";
+import StudentsListComponent from "../components/admin/students/StudentsListComponent";
 
 const routes = [
     {
@@ -93,6 +95,31 @@ const routes = [
             },
         ]
     },
+
+    {
+        path: '/admin/students',
+        component: StudentsComponent,
+        name: 'admin.students',
+        redirect: {name: 'admin.students.list'},
+        meta: {
+            auth: true,
+            permissionUrl: 'students',
+            breadcrumb: 'Institutes'
+        },
+        children: [
+            {
+                path: 'list',
+                component: StudentsListComponent,
+                name: 'admin.students.list',
+                meta: {
+                    auth: true,
+                    permissionUrl: 'students',
+                    breadcrumb: ''
+                }
+            },
+        ]
+    },
+
 
 
     {

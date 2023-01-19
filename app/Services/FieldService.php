@@ -3,24 +3,21 @@
 namespace App\Services;
 
 
-use App\Http\Requests\InstituteRequest;
+use App\Http\Requests\FieldRequest;
 use App\Http\Requests\PaginateRequest;
-use App\Models\Institute;
+use App\Models\Field;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class InstituteService
+class FieldService
 {
-    public $institute;
-    protected $instituteFilter = [
-        'name',
-        'email',
-        'phone',
+    public $field;
+    protected $fieldFilter = [
+        'title',
         'slug',
         'status',
-        'description'
     ];
 
     /**
@@ -35,9 +32,9 @@ class InstituteService
             $orderColumn = $request->get('order_column') ?? 'id';
             $orderType   = $request->get('order_type') ?? 'desc';
 
-            return Institute::with('media')->where(function ($query) use ($requests) {
+            return Field::with('media')->where(function ($query) use ($requests) {
                 foreach ($requests as $key => $request) {
-                    if (in_array($key, $this->instituteFilter)) {
+                    if (in_array($key, $this->fieldFilter)) {
                         $query->where($key, 'like', '%' . $request . '%');
                     }
                 }
@@ -53,14 +50,14 @@ class InstituteService
     /**
      * @throws Exception
      */
-    public function store(InstituteRequest $request)
+    public function store(FieldRequest $request)
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->institute = Institute::create($request->validated() + ['slug' => Str::slug($request->name)]);
+                $this->field = Field::create($request->validated() + ['slug' => Str::slug($request->name)]);
 
             });
-            return $this->institute;
+            return $this->field;
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             DB::rollBack();
@@ -71,13 +68,13 @@ class InstituteService
     /**
      * @throws Exception
      */
-    public function update(InstituteRequest $request, Institute $institute) : Institute
+    public function update(FieldRequest $request, Field $field) : Field
     {
         try {
-            DB::transaction(function () use ($request, $institute) {
-                $institute->update($request->validated() + ['slug' => Str::slug($request->name)]);
+            DB::transaction(function () use ($request, $field) {
+                $field->update($request->validated() + ['slug' => Str::slug($request->name)]);
             });
-            return Institute::find($institute->id);
+            return Field::find($field->id);
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             DB::rollBack();
@@ -88,11 +85,11 @@ class InstituteService
     /**
      * @throws Exception
      */
-    public function destroy(Institute $institute)
+    public function destroy(Field $field)
     {
         try {
-            DB::transaction(function () use ($institute) {
-                $institute->delete();
+            DB::transaction(function () use ($field) {
+                $field->delete();
             });
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
@@ -104,10 +101,10 @@ class InstituteService
     /**
      * @throws Exception
      */
-    public function show(Institute $institute) : Institute
+    public function show(Field $field) : Field
     {
         try {
-            return $institute;
+            return $field;
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);
